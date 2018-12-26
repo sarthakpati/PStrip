@@ -9,7 +9,7 @@ with open(json_file, 'r') as nifty_json:
 nifty_bin = cfg['nifty']['bin']
 
 def nifty_reg_bspline(ref, flo, res = False, cpp = False, rmask = False, fmask = False, levels = False ):
-    executable = nifty_bin + '/reg_f3d'
+    executable = nifty_bin + '/reg_f3d -omp 8 '
 
     cmd = executable + ' -ref ' + ref + ' -flo ' + flo
     if cpp != False:
@@ -22,14 +22,14 @@ def nifty_reg_bspline(ref, flo, res = False, cpp = False, rmask = False, fmask =
         cmd += ' -fmask ' + fmask
     if levels != False:
         cmd += ' -lp ' + str(levels)
-    cmd = cmd + ' -sx 10 --lncc 40 -pad 0'
+    cmd = cmd + ' -sx -5 --ssdn -pad 0 -maxit 500'
 #    cmd = cmd + ' -sx 10 --nmi --rbn 100 --fbn 100 -gpu -pad 0 -pert 1'
 
 
     return cmd
 
 def nifty_reg_affine(ref, flo, res = False, aff = False, rmask = False, fmask = False, symmetric = True, init = 'center'):
-    executable = nifty_bin + '/reg_aladin' 
+    executable = nifty_bin + '/reg_aladin -omp 8' 
     cmd  = executable + ' -ref ' + ref + ' -flo ' + flo
     if res != False: 
         cmd += ' -res ' + res
@@ -43,10 +43,11 @@ def nifty_reg_affine(ref, flo, res = False, aff = False, rmask = False, fmask = 
         cmd += ' -noSym'
 #    if init != 'center':
 #        cmd += ' -' + init
+    cmd = cmd + ' -pad 0'
     return cmd
 
 def nifty_reg_transform(ref=False, ref2=False, invAff1 = False, invAff2 = False, invNrr1 = False, invNrr2 = False, invNrr3 = False, disp1 = False, disp2 = False, def1 = False, def2 = False, comp1 = False, comp2 = False, comp3 = False):
-    executable = nifty_bin + '/reg_transform'
+    executable = nifty_bin + '/reg_transform -omp 8'
     cmd = executable
     if ref != False:
         cmd += ' -ref ' + ref
@@ -66,7 +67,7 @@ def nifty_reg_transform(ref=False, ref2=False, invAff1 = False, invAff2 = False,
     return cmd
    
 def nifty_reg_resample(ref, flo, trans = False, res = False):
-    executable = nifty_bin + '/reg_resample'
+    executable = nifty_bin + '/reg_resample -omp 8'
     cmd = executable + ' -ref ' + ref + ' -flo ' + flo
     if trans != False:
         cmd += ' -trans ' + trans
